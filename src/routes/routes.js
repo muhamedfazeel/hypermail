@@ -1,1 +1,5 @@
-module.exports = {};
+const imageRouter = require("../app/image/image.routes");
+
+module.exports = {
+  imageRouter,
+};
