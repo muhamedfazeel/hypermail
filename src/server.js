@@ -9,12 +9,9 @@ const imageService = require("./app/image/image.service");
 
 const app = express();
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-try {
-
-} catch (error) {
-  logger.error(error);
-}
+app.use("/api/v1/images", routers.imageRouter);
 
 const PORT = config.app.port;
 app.listen(PORT, () => {
