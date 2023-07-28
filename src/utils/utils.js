@@ -2,14 +2,14 @@ const path = require("path");
 const logger = require("./logger");
 const fs = require("fs");
 
-const clearUploads = (generated = false) => {
+const clearUploads = (dirPath) => {
   try {
-    const dirPath =
-      generated && generated === true ? "uploads/generated" : "uploads/base";
+    if (!fs.existsSync(dirPath)) {
+      console.log("first");
+      fs.mkdirSync(dirPath, { recursive: true });
+    }
     const files = fs.readdirSync(dirPath);
-    console.log(files);
-
-    files.forEach((file) => fs.unlinkSync(path.join(dirPath, file)));
+    files.forEach((file) => fs.unlinkSync(path.join(path, file)));
     return true;
   } catch (err) {
     logger.error(err);
