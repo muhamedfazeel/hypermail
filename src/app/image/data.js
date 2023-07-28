@@ -2,7 +2,7 @@ const datas = [
   { name: "John Doe", email: "john.doe@qburst.com" },
   { name: "Peter Parker", email: "peter.parker@qburst.com" },
 ];
-const config = {
+const options = {
   file: {
     nameKey: "name",
     index: false,
@@ -46,6 +46,6 @@ const config = {
 };
 
 module.exports = {
-  config,
+  options,
   datas,
 };

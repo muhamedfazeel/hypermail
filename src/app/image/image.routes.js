@@ -8,6 +8,7 @@ imageRouter.post(
   (req, res, next) => {
     clearUploads("uploads/base");
     clearUploads("uploads/fonts");
+    clearUploads("uploads/generated");
     next();
   },
   uploadHandler,

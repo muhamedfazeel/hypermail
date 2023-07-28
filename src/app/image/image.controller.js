@@ -1,18 +1,23 @@
-const config = require("../../config/config");
 const logger = require("../../utils/logger");
 const { clearUploads } = require("../../utils/utils");
-const { datas } = require("./data");
+const { datas, options } = require("./data");
 const imageService = require("./image.service");
 
-const GenerateImage = (req, res) => {
+const GenerateImage = async (req, res) => {
   const body = req.body;
   const files = req.files;
-  console.log(body);
-  console.log(files);
+  const baseImage = files.image[0];
   try {
-    imageService.generateImage(datas, "", config);
+    const generatedImages = await imageService.generateImage(
+      datas,
+      baseImage.path,
+      options,
+      req
+    );
+    res.status(200).send(generatedImages);
   } catch (error) {
     logger.error(error);
+    res.status(500).send({});
   }
 };
 
