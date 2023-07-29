@@ -3,15 +3,15 @@ const multer = require("multer");
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     let dir = "uploads";
-    if (file.fieldname == "font") {
-    } else if (file.fieldname == "font") {
-    }
     switch (file.fieldname) {
       case "image":
         dir += "/base";
         break;
       case "font":
         dir += "/fonts";
+        break;
+      case "data":
+        dir += "/data";
         break;
     }
     cb(null, dir);
@@ -24,6 +24,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 const uploadHandler = upload.fields([
   { name: "image", maxCount: 1 },
+  { name: "data", maxCount: 1 },
   { name: "font" },
 ]);
 

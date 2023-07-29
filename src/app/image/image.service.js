@@ -1,5 +1,7 @@
 const fs = require("fs");
 const { createCanvas, loadImage, registerFont } = require("canvas");
+const { datas } = require("./data");
+const path = require("path");
 
 let i = 1;
 async function addTextsOnImage(data, baseImage, options) {
@@ -53,11 +55,12 @@ async function addTextsOnImage(data, baseImage, options) {
   }.${fileExtension}`;
   const fileDir = `${dir}/${fileName}`;
   fs.writeFileSync(fileDir, canvas.toBuffer());
-  i = 0;
   return fileName;
 }
 
-const generateImage = async (datas, baseImage, options, req) => {
+const generateImage = async (options, req) => {
+  const baseImage = getBaseImage();
+  const datas = getDatas();
   const generatedImages = datas.map((data) => {
     return addTextsOnImage(data, baseImage, options).then((file) => {
       const fileLink = `${req.protocol}://${req.get("host")}/generated/${file}`;
@@ -65,7 +68,18 @@ const generateImage = async (datas, baseImage, options, req) => {
     });
   });
   const links = await Promise.all(generatedImages);
+  i = 0;
   return links;
+};
+
+const getBaseImage = () => {
+  const dir = "uploads/base";
+  const file = fs.readdirSync(dir)[0];
+  return path.join(dir, file);
+};
+
+const getDatas = () => {
+  return datas;
 };
 
 module.exports = { generateImage };

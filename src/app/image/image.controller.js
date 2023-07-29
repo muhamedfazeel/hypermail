@@ -1,20 +1,24 @@
+const httpStatus = require("http-status");
 const logger = require("../../utils/logger");
-const { clearUploads } = require("../../utils/utils");
-const { datas, options } = require("./data");
 const imageService = require("./image.service");
+const Response = require("../../common/dto/response.dto");
+
+const UploadFiles = (req, res) => {
+  const response = new Response(httpStatus.OK, "Successfully uploaded files");
+  res.send(response.code).send(response);
+};
 
 const GenerateImage = async (req, res) => {
-  const body = req.body;
-  const files = req.files;
-  const baseImage = files.image[0];
+  const options = req.body;
+
   try {
-    const generatedImages = await imageService.generateImage(
-      datas,
-      baseImage.path,
-      options,
-      req
+    const generatedImages = await imageService.generateImage(options, req);
+    const response = new Response(
+      httpStatus.CREATED,
+      "images generated successfully",
+      { links: generatedImages }
     );
-    res.status(200).send(generatedImages);
+    res.status(response.code).send(response);
   } catch (error) {
     logger.error(error);
     res.status(500).send({});
@@ -23,4 +27,5 @@ const GenerateImage = async (req, res) => {
 
 module.exports = {
   GenerateImage,
+  UploadFiles,
 };
