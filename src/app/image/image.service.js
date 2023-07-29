@@ -18,7 +18,9 @@ async function addTextsOnImage(data, baseImage, options) {
     if (text) {
       if (options.font.external) {
         options.font.fonts.forEach((fontData) => {
-          registerFont(fontData.path, { family: fontData.family });
+          registerFont(getFontPath(fontData.fileName), {
+            family: fontData.family,
+          });
         });
       }
 
@@ -28,22 +30,23 @@ async function addTextsOnImage(data, baseImage, options) {
 
       const textDimen = ctx.measureText(text);
       let xPos = t.position.x;
+      let max = t.position.max < 0 ? image.width : t.position.max;
       switch (t.font.align) {
         case "center":
-          xPos = t.position.x + (t.position.max - textDimen.width) / 2;
+          xPos = t.position.x + (max - textDimen.width) / 2;
           break;
         case "left":
           xPos = t.position.x;
           break;
         case "right":
-          xPos = t.position.x + (t.position.max - textDimen.width);
+          xPos = t.position.x + (max - textDimen.width);
           break;
         default:
           xPos = t.position.x;
           break;
       }
 
-      ctx.fillText(text, xPos, t.position.y, t.position.max);
+      ctx.fillText(text, xPos, t.position.y, max);
     }
   });
   const dir = "uploads/generated";
@@ -80,6 +83,14 @@ const getBaseImage = () => {
 
 const getDatas = () => {
   return datas;
+};
+
+const getFontPath = (fileName) => {
+  const dir = "uploads/fonts";
+  const font = fs
+    .readdirSync(dir)
+    .find((font) => font.includes(fileName.toLowerCase()));
+  return path.join(dir, font);
 };
 
 module.exports = { generateImage };
