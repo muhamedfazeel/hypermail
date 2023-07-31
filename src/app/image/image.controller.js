@@ -5,7 +5,7 @@ const Response = require("../../common/dto/response.dto");
 
 const UploadFiles = (req, res) => {
   const response = new Response(httpStatus.OK, "Successfully uploaded files");
-  res.send(response.code).send(response);
+  res.status(response.code).send(response);
 };
 
 const GenerateImage = async (req, res) => {

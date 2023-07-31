@@ -1,6 +1,5 @@
 require("dotenv").config();
 const express = require("express");
-const bodyParser = require("body-parser");
 
 const config = require("./config/config");
 const logger = require("./utils/logger");
@@ -8,8 +7,8 @@ const routers = require("./routes/routes");
 const imageService = require("./app/image/image.service");
 
 const app = express();
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(express.static("uploads"));
 
 app.use("/api/v1/images", routers.imageRouter);
