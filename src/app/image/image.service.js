@@ -1,7 +1,8 @@
 const fs = require("fs");
 const { createCanvas, loadImage, registerFont } = require("canvas");
-const { datas } = require("./data");
+// const { datas } = require("./data");
 const path = require("path");
+const { getCsvData } = require("../../utils/readCsvData");
 
 let i = 1;
 async function addTextsOnImage(data, baseImage, options) {
@@ -53,9 +54,8 @@ async function addTextsOnImage(data, baseImage, options) {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
-  fileName = `${data[options.file.nameKey].toLowerCase().replace(" ", "-")}${
-    options.file.index ? i++ : ""
-  }.${fileExtension}`;
+  fileName = `${data[options.file.nameKey].toLowerCase().replace(" ", "-")}${options.file.index ? i++ : ""
+    }.${fileExtension}`;
   const fileDir = `${dir}/${fileName}`;
   fs.writeFileSync(fileDir, canvas.toBuffer());
   return fileName;
@@ -63,12 +63,11 @@ async function addTextsOnImage(data, baseImage, options) {
 
 const generateImage = async (options, req) => {
   const baseImage = getBaseImage();
-  const datas = getDatas();
-  const generatedImages = datas.map((data) => {
-    return addTextsOnImage(data, baseImage, options).then((file) => {
-      const fileLink = `${req.protocol}://${req.get("host")}/generated/${file}`;
-      return fileLink;
-    });
+  const datas = await getDatas();
+  const generatedImages = datas.map(async (data) => {
+    const file = await addTextsOnImage(data, baseImage, options);
+    const fileLink = `${req.protocol}://${req.get("host")}/generated/${file}`;
+    return fileLink;
   });
   const links = await Promise.all(generatedImages);
   i = 0;
@@ -81,8 +80,12 @@ const getBaseImage = () => {
   return path.join(dir, file);
 };
 
-const getDatas = () => {
-  return datas;
+const getDatas = async () => {
+  const dir = "uploads/data";
+  const file = fs.readdirSync(dir)[0];
+  const filePath = path.join(dir, file);
+  const jsonData = getCsvData(filePath);
+  return jsonData;
 };
 
 const getFontPath = (fileName) => {
